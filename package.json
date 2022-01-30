@@ -31,14 +31,7 @@
     "url": "https://github.com/node-red/node-red/issues"
   },
   "bundleDependencies": false,
-  "contributors": [
-    {
-      "name": "Nick O'Leary"
-    },
-    {
-      "name": "Dave Conway-Jones"
-    }
-  ],
+
   "dependencies": {
     "@node-red/editor-api": "2.2.0",
     "@node-red/nodes": "2.2.0",
@@ -50,6 +43,7 @@
     "express": "4.17.2",
     "fs-extra": "10.0.0",
     "node-red-admin": "^2.2.2",
+    "node-red-contrib-mongodb4": "~1.2.3",
     "nopt": "5.0.0",
     "semver": "7.3.5"
   },
@@ -65,18 +59,9 @@
     "iot",
     "flow"
   ],
-  "license": "Apache-2.0",
   "main": "lib/red.js",
-  "name": "node-red",
-  "optionalDependencies": {
-    "bcrypt": "5.0.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/node-red/node-red.git"
-  },
   "scripts": {
     "start": "node red.js"
   },
-  "version": "2.2.0"
+  "version": "0.0.1"
 }

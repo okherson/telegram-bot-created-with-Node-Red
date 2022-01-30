@@ -8,9 +8,81 @@
         "env": []
     },
     {
+        "id": "b2d87526124908d3",
+        "type": "tab",
+        "label": "Router",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3d99c27f51c2d001",
+        "type": "tab",
+        "label": "main",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "a5dbc1a6f35dd83e",
         "type": "tab",
         "label": "onboarding",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "89be0f25632bd28a",
+        "type": "tab",
+        "label": "appartment_rent",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "2ade4ea4102cc1ec",
+        "type": "tab",
+        "label": "other_rent",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "9ba50324dd1e6e05",
+        "type": "tab",
+        "label": "events",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0cc2b3c19faa03e9",
+        "type": "tab",
+        "label": "government",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8c2d6816e744f51d",
+        "type": "tab",
+        "label": "letters",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "3949f14a014878ce",
+        "type": "tab",
+        "label": "other",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d869d79036fed8e9",
+        "type": "tab",
+        "label": "finish",
         "disabled": false,
         "info": "",
         "env": []
@@ -135,8 +207,8 @@
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 127.50008010864258,
-        "y": 101.2500171661377,
+        "x": 209.999981880188,
+        "y": 158.88889503479004,
         "wires": [
             [
                 "bfdd70c1de5bcd43",
@@ -152,8 +224,8 @@
         "name": "",
         "statusCode": "200",
         "headers": {},
-        "x": 357.5000801086426,
-        "y": 101.2500171661377,
+        "x": 439.999981880188,
+        "y": 98.88889503479004,
         "wires": []
     },
     {
@@ -182,8 +254,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 347.5000801086426,
-        "y": 181.2500171661377,
+        "x": 429.999981880188,
+        "y": 158.88889503479004,
         "wires": [
             [
                 "7050bc3c825808c7"
@@ -203,14 +275,551 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 127.50008010864258,
-        "y": 181.2500171661377,
+        "x": 449.999981880188,
+        "y": 218.88889503479004,
         "wires": []
     },
     {
-        "id": "c8bf13b163eee437",
-        "type": "debug",
+        "id": "7050bc3c825808c7",
+        "type": "function",
         "z": "0b520d44806a11f3",
+        "name": "",
+        "func": "msg.payload.chat_id = msg.payload.message.chat.id;\nmsg.chat_id = msg.payload.message.chat.id;\nmsg.firstName = msg.payload.message.from.first_name;\nmsg.text = msg.payload.message.text;\n\n\n//check if exists user_data \nif (!global.get(`${msg.payload.message.chat.id}`)) {\n    msg.user_data = {};\n    msg.user_data.flow = 'onboarding';\n    msg.user_data.state = 'registration';    \n} else {\n    msg.user_data = global.get(`${msg.payload.message.chat.id}`);\n}\n\n\n//get data from contact if exists\nif (msg.message && msg.message.contact && msg.message.contact.phone_number) {\n    smq.user_data.phone_number = msg.message.contact.phone_number;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 573.999981880188,
+        "y": 158.88889503479004,
+        "wires": [
+            [
+                "dd45b5872122f924"
+            ]
+        ]
+    },
+    {
+        "id": "dd45b5872122f924",
+        "type": "link out",
+        "z": "0b520d44806a11f3",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "55c2e9c77550f687",
+            "4c52d0e8ef6be12d",
+            "9e8f975502b2d175"
+        ],
+        "x": 701.166615486145,
+        "y": 158.97223091125488,
+        "wires": []
+    },
+    {
+        "id": "9e8f975502b2d175",
+        "type": "link in",
+        "z": "b2d87526124908d3",
+        "name": "",
+        "links": [
+            "dd45b5872122f924",
+            "07d4233179f2c1d8"
+        ],
+        "x": 195,
+        "y": 280,
+        "wires": [
+            [
+                "35c3fef1083b2cdc"
+            ]
+        ]
+    },
+    {
+        "id": "c4c294758852fc13",
+        "type": "switch",
+        "z": "b2d87526124908d3",
+        "name": "current flow",
+        "property": "user_data.flow",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "onboarding",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "main",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "appartment_rent",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "other_rent",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "events",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "government",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "letters",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "other",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "finish",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 10,
+        "x": 591.1111660003662,
+        "y": 280,
+        "wires": [
+            [
+                "bd25d4144fb53088"
+            ],
+            [
+                "dba7fd904a4fb8eb"
+            ],
+            [
+                "2edec0742b8c817a"
+            ],
+            [
+                "a77622dddc02aab1"
+            ],
+            [
+                "d618acaca75b1ab4"
+            ],
+            [
+                "b4d1002d6b62f9fd"
+            ],
+            [
+                "b2043f816e030982"
+            ],
+            [
+                "266bb41d6f623afc"
+            ],
+            [
+                "190f871a83df6eee"
+            ],
+            [
+                "bd25d4144fb53088"
+            ]
+        ]
+    },
+    {
+        "id": "bd25d4144fb53088",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "onboarding",
+        "mode": "link",
+        "links": [
+            "7efa52e1fa3c0446"
+        ],
+        "x": 805,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "2edec0742b8c817a",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "appartment_rent",
+        "mode": "link",
+        "links": [
+            "cee9f2b82465bab9"
+        ],
+        "x": 805,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "d618acaca75b1ab4",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "events",
+        "mode": "link",
+        "links": [
+            "64bf90ee4120ccec"
+        ],
+        "x": 805,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "b4d1002d6b62f9fd",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "government",
+        "mode": "link",
+        "links": [
+            "96778e5e1f7f59c6"
+        ],
+        "x": 805,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "b2043f816e030982",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "letters",
+        "mode": "link",
+        "links": [
+            "fd7cdb605c4b9596"
+        ],
+        "x": 805,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "266bb41d6f623afc",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "other",
+        "mode": "link",
+        "links": [
+            "5907e6d7961294a4"
+        ],
+        "x": 805,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "a77622dddc02aab1",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "other_rent",
+        "mode": "link",
+        "links": [
+            "73c42d2b6fb9a87e"
+        ],
+        "x": 805,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "dba7fd904a4fb8eb",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "main",
+        "mode": "link",
+        "links": [
+            "74aa1ada8e5350bd"
+        ],
+        "x": 805,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "35c3fef1083b2cdc",
+        "type": "function",
+        "z": "b2d87526124908d3",
+        "name": "parse message, update flow",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 280,
+        "wires": [
+            [
+                "c4c294758852fc13"
+            ]
+        ]
+    },
+    {
+        "id": "190f871a83df6eee",
+        "type": "link out",
+        "z": "b2d87526124908d3",
+        "name": "finish",
+        "mode": "link",
+        "links": [
+            "384e6fca60b9dc4f"
+        ],
+        "x": 805,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "74aa1ada8e5350bd",
+        "type": "link in",
+        "z": "3d99c27f51c2d001",
+        "name": "",
+        "links": [
+            "dba7fd904a4fb8eb"
+        ],
+        "x": 115,
+        "y": 180,
+        "wires": [
+            [
+                "d5d58834aff9aa07"
+            ]
+        ]
+    },
+    {
+        "id": "d5d58834aff9aa07",
+        "type": "function",
+        "z": "3d99c27f51c2d001",
+        "name": "get_email",
+        "func": "\nmsg.payload.text = 'Тут буде головне меню';\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 180,
+        "wires": [
+            [
+                "3086eb3348ef6e80"
+            ]
+        ]
+    },
+    {
+        "id": "3086eb3348ef6e80",
+        "type": "subflow:66e6af8356755793",
+        "z": "3d99c27f51c2d001",
+        "name": "",
+        "x": 390,
+        "y": 180,
+        "wires": [
+            [
+                "cab197ae1131d805"
+            ],
+            [
+                "fc9deab01c52c65f"
+            ]
+        ]
+    },
+    {
+        "id": "cab197ae1131d805",
+        "type": "debug",
+        "z": "3d99c27f51c2d001",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "fc9deab01c52c65f",
+        "type": "debug",
+        "z": "3d99c27f51c2d001",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "7efa52e1fa3c0446",
+        "type": "link in",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "links": [
+            "b4ff009868182db4",
+            "bd25d4144fb53088"
+        ],
+        "x": 72.7777509689331,
+        "y": 547.7777109146118,
+        "wires": [
+            [
+                "6886102e9dda7f40",
+                "d3175e46dbbd240a",
+                "4515f437b0ea9c3d"
+            ]
+        ]
+    },
+    {
+        "id": "e1fc50f72bad8b5b",
+        "type": "switch",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "state",
+        "property": "user_data.state",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "registration",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "get_first_name",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "get_last_name",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "get_phone",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "get_email",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "confirmation",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "change_profile",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "finish",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 8,
+        "x": 518.888843536377,
+        "y": 546.6666612625122,
+        "wires": [
+            [
+                "9a5b7e4eaea7d16e",
+                "8b5a37a1f5263ad3"
+            ],
+            [
+                "30593ffebc46a67c"
+            ],
+            [
+                "44402701bbd79b75"
+            ],
+            [
+                "b92a397721ac0f43"
+            ],
+            [
+                "51816768e0e957b8"
+            ],
+            [
+                "2884eee5e7b9ae78"
+            ],
+            [
+                "7180902a2ad831fe"
+            ],
+            [
+                "60e81eed4fdac841"
+            ]
+        ]
+    },
+    {
+        "id": "30593ffebc46a67c",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "get_first_name",
+        "func": "msg.payload.text = \"Введіть ваше ім'я:\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 732.2222366333008,
+        "y": 291.1111125946045,
+        "wires": [
+            [
+                "e76e90f99c00378a"
+            ]
+        ]
+    },
+    {
+        "id": "910f8382976859c4",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "user_data",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1302.2222366333008,
+        "y": 171.1111125946045,
+        "wires": []
+    },
+    {
+        "id": "e76e90f99c00378a",
+        "type": "subflow:66e6af8356755793",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "x": 942.2222366333008,
+        "y": 291.1111125946045,
+        "wires": [
+            [
+                "19725832d88f9e3e"
+            ],
+            [
+                "c3e14c5e8013d342"
+            ]
+        ]
+    },
+    {
+        "id": "f51d1c41dc12026e",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "set state",
+        "func": "msg.user_data.state = 'get_first_name';\nmsg.user_data.flow = 'onboarding';\nmsg.user_data.chat_id = msg.chat_id;\n\nglobal.set(`${msg.chat_id}`, msg.user_data);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1132.2222366333008,
+        "y": 171.1111125946045,
+        "wires": [
+            [
+                "910f8382976859c4"
+            ]
+        ]
+    },
+    {
+        "id": "c3e14c5e8013d342",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
         "name": "webhooktg",
         "active": true,
         "tosidebar": true,
@@ -220,213 +829,814 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1290,
-        "y": 160,
+        "x": 1102.2222366333008,
+        "y": 331.1111125946045,
         "wires": []
     },
     {
-        "id": "7050bc3c825808c7",
+        "id": "9a5b7e4eaea7d16e",
         "type": "function",
-        "z": "0b520d44806a11f3",
-        "name": "",
-        "func": "msg.chatId = msg.payload.message.chat.id;\nmsg.firstName = msg.payload.message.from.first_name;\nmsg.text = msg.payload.message.text;\nmsg.state = global.get(\"state\") ? global.get(\"state\") : null;\n\nreturn msg;",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "welcome",
+        "func": " msg.payload.text = `Привіт! Я статичний бот Пласту у Львові!`;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 491.5000801086426,
-        "y": 181.2500171661377,
+        "x": 713.3333702087402,
+        "y": 70,
         "wires": [
             [
-                "7564d79b4f68c063"
+                "0897d816f98fbe52"
             ]
         ]
     },
     {
-        "id": "d923d3745f214d13",
+        "id": "0897d816f98fbe52",
         "type": "subflow:66e6af8356755793",
-        "z": "0b520d44806a11f3",
+        "z": "a5dbc1a6f35dd83e",
         "name": "",
-        "x": 977.5000953674316,
-        "y": 181.25002002716064,
+        "x": 940.0000457763672,
+        "y": 70.00000190734863,
         "wires": [
             [
-                "abde3a29827365bd"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "7564d79b4f68c063",
-        "type": "switch",
-        "z": "0b520d44806a11f3",
-        "name": "text /start",
-        "property": "text",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "/start",
-                "vt": "str"
-            },
-            {
-                "t": "else"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 657.5000801086426,
-        "y": 181.2500171661377,
-        "wires": [
-            [
-                "56d8db40bdd69a45"
+                "3fced38cac8e8595"
             ],
             [
-                "b13fdfdb54641480"
+                "0102997b48019e49"
             ]
         ]
     },
     {
-        "id": "56d8db40bdd69a45",
-        "type": "function",
-        "z": "0b520d44806a11f3",
-        "name": "",
-        "func": " msg.payload = {\n     \"chat_id\": msg.chatId,\n     \"text\": `Hello, ${msg.firstName}.\\nIt's such a beautiful world!`\n };\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 797.5000801086426,
-        "y": 161.2500171661377,
-        "wires": [
-            [
-                "d923d3745f214d13"
-            ]
-        ]
-    },
-    {
-        "id": "abde3a29827365bd",
-        "type": "function",
-        "z": "0b520d44806a11f3",
-        "name": "set state",
-        "func": "global.set(\"state\", \"welcome\");\nglobal.set(\"flow\", 'onboarding');\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1140,
-        "y": 160,
-        "wires": [
-            [
-                "c8bf13b163eee437"
-            ]
-        ]
-    },
-    {
-        "id": "b13fdfdb54641480",
-        "type": "switch",
-        "z": "0b520d44806a11f3",
-        "name": "flow",
-        "property": "flow",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "onboarding",
-                "vt": "str"
-            },
-            {
-                "t": "else"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 810,
-        "y": 280,
-        "wires": [
-            [
-                "b4ff009868182db4"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "b4ff009868182db4",
-        "type": "link out",
-        "z": "0b520d44806a11f3",
-        "name": "",
-        "mode": "link",
-        "links": [
-            "218733ef4ac534e2",
-            "7efa52e1fa3c0446"
-        ],
-        "x": 945,
-        "y": 260,
+        "id": "19725832d88f9e3e",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1262.2222366333008,
+        "y": 262.1111125946045,
         "wires": []
     },
     {
-        "id": "7efa52e1fa3c0446",
-        "type": "link in",
+        "id": "9d458c5425c73b0e",
+        "type": "function",
         "z": "a5dbc1a6f35dd83e",
-        "name": "",
-        "links": [
-            "b4ff009868182db4"
-        ],
-        "x": 185,
-        "y": 140,
+        "name": "set state",
+        "func": "msg.user_data.state = 'get_first_name';\n\nglobal.set(`${msg.chat_id}`, msg.user_data);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 260,
         "wires": [
             [
-                "e1fc50f72bad8b5b"
+                "19725832d88f9e3e"
             ]
         ]
     },
     {
-        "id": "e1fc50f72bad8b5b",
-        "type": "switch",
+        "id": "44402701bbd79b75",
+        "type": "function",
         "z": "a5dbc1a6f35dd83e",
-        "name": "flow",
-        "property": "flow",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "onboarding",
-                "vt": "str"
-            },
-            {
-                "t": "else"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 290,
-        "y": 140,
+        "name": "get_last_name",
+        "func": "msg.payload.text = \"Введіть ваше прізвище:\";\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 732.2222366333008,
+        "y": 411.1111125946045,
         "wires": [
             [
-                "30593ffebc46a67c"
-            ],
-            []
+                "1726caf5964b0f83"
+            ]
         ]
     },
     {
-        "id": "30593ffebc46a67c",
+        "id": "1726caf5964b0f83",
+        "type": "subflow:66e6af8356755793",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "x": 942.2222366333008,
+        "y": 411.1111125946045,
+        "wires": [
+            [
+                "36805dea2db78111"
+            ],
+            [
+                "3e827fbb90406bca"
+            ]
+        ]
+    },
+    {
+        "id": "3e827fbb90406bca",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1102.2222366333008,
+        "y": 451.1111125946045,
+        "wires": []
+    },
+    {
+        "id": "36805dea2db78111",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1262.2222366333008,
+        "y": 382.1111125946045,
+        "wires": []
+    },
+    {
+        "id": "5480fcbe4beb8f80",
         "type": "function",
         "z": "a5dbc1a6f35dd83e",
-        "name": "get phone",
+        "name": "set state",
+        "func": "msg.user_data.state = 'get_last_name';\nmsg.user_data.first_name = msg.text;\nglobal.set(`${msg.chat_id}`, msg.user_data);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1112.2222366333008,
+        "y": 382.1111125946045,
+        "wires": [
+            [
+                "36805dea2db78111"
+            ]
+        ]
+    },
+    {
+        "id": "b92a397721ac0f43",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "get_phone",
+        "func": "\nmsg.payload.text = 'Ваш номер телефону';\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Поділитись номером\",\n            \"request_contact\": true\n        }]\n    ],\n    'resize_keyboard': true\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 722.2222366333008,
+        "y": 551.1111125946045,
+        "wires": [
+            [
+                "eb5fa10ede2c7467"
+            ]
+        ]
+    },
+    {
+        "id": "eb5fa10ede2c7467",
+        "type": "subflow:66e6af8356755793",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "x": 942.2222366333008,
+        "y": 551.1111125946045,
+        "wires": [
+            [
+                "ec0ffb3bc352afe4"
+            ],
+            [
+                "3879db8e37c73955"
+            ]
+        ]
+    },
+    {
+        "id": "3879db8e37c73955",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1102.2222366333008,
+        "y": 591.1111125946045,
+        "wires": []
+    },
+    {
+        "id": "ec0ffb3bc352afe4",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1262.2222366333008,
+        "y": 522.1111125946045,
+        "wires": []
+    },
+    {
+        "id": "61a988491dd9ad63",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "set state",
+        "func": "msg.user_data.state = 'get_phone';\nmsg.user_data.last_name = msg.text;\nglobal.set(`${msg.chat_id}`, msg.user_data);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1112.2222366333008,
+        "y": 522.1111125946045,
+        "wires": [
+            [
+                "ec0ffb3bc352afe4"
+            ]
+        ]
+    },
+    {
+        "id": "51816768e0e957b8",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "get_email",
+        "func": "\nmsg.payload.text = 'Ваш email:';\nmsg.payload.entities = [{\n    \"type\": \"email\",\n    \"offset\": 2,\n    \"length\": 20\n}];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 712.2222366333008,
+        "y": 691.1111125946045,
+        "wires": [
+            [
+                "438241d8ad9b0938"
+            ]
+        ]
+    },
+    {
+        "id": "438241d8ad9b0938",
+        "type": "subflow:66e6af8356755793",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "x": 942.2222366333008,
+        "y": 691.1111125946045,
+        "wires": [
+            [
+                "aa7d124d011f79d1"
+            ],
+            [
+                "0d2e97dc92e426a5"
+            ]
+        ]
+    },
+    {
+        "id": "0d2e97dc92e426a5",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1102.2222366333008,
+        "y": 731.1111125946045,
+        "wires": []
+    },
+    {
+        "id": "aa7d124d011f79d1",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1262.2222366333008,
+        "y": 662.1111125946045,
+        "wires": []
+    },
+    {
+        "id": "7d0f3454db707746",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "get_email",
+        "func": "msg.user_data.state = 'confirmation';\n\nglobal.set(`${msg.chat_id}`, msg.user_data);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1112.2222366333008,
+        "y": 662.1111125946045,
+        "wires": [
+            [
+                "aa7d124d011f79d1"
+            ]
+        ]
+    },
+    {
+        "id": "0102997b48019e49",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "error",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1096.6667213439941,
+        "y": 113.3333387374878,
+        "wires": []
+    },
+    {
+        "id": "e7550d2553d67c1d",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "registration",
+        "func": "\nmsg.payload.text = 'Щоб усі твої запити було простіше обробляти пропоную тобі зареєструватись';\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Зареєструватись\",\n            \"callback_data\": \"get_first_name\"\n        }]\n    ],\n    'resize_keyboard': true\n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 725.5555648803711,
+        "y": 191.1111011505127,
+        "wires": [
+            [
+                "441c5f2a0dc68c31"
+            ]
+        ]
+    },
+    {
+        "id": "441c5f2a0dc68c31",
+        "type": "subflow:66e6af8356755793",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "x": 940.0000457763672,
+        "y": 190.00000190734863,
+        "wires": [
+            [
+                "910f8382976859c4"
+            ],
+            [
+                "7d111e3f5ce966aa"
+            ]
+        ]
+    },
+    {
+        "id": "7d111e3f5ce966aa",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "error",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1122.2222366333008,
+        "y": 211.1111125946045,
+        "wires": []
+    },
+    {
+        "id": "7180902a2ad831fe",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "change_profile",
         "func": "\n\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 480,
-        "y": 120,
+        "x": 734.4444561004639,
+        "y": 976.6666469573975,
+        "wires": [
+            [
+                "69853634293aea42"
+            ]
+        ]
+    },
+    {
+        "id": "69853634293aea42",
+        "type": "subflow:66e6af8356755793",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "x": 944.4444561004639,
+        "y": 976.6666469573975,
+        "wires": [
+            [
+                "ce5d2fe7d3abf272"
+            ],
+            [
+                "1c018193a11f4428"
+            ]
+        ]
+    },
+    {
+        "id": "1c018193a11f4428",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1104.4444561004639,
+        "y": 1016.6666469573975,
+        "wires": []
+    },
+    {
+        "id": "ce5d2fe7d3abf272",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1302.2222061157227,
+        "y": 947.6666030883789,
+        "wires": []
+    },
+    {
+        "id": "4e5eb69bac96bea4",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "change_profile",
+        "func": "global.set(\"state\", \"\");\nglobal.set(\"flow\", 'main');\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1134.4444561004639,
+        "y": 947.6666469573975,
+        "wires": [
+            [
+                "ce5d2fe7d3abf272"
+            ]
+        ]
+    },
+    {
+        "id": "8b5a37a1f5263ad3",
+        "type": "delay",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "2",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 713.3333740234375,
+        "y": 143.33333587646484,
+        "wires": [
+            [
+                "e7550d2553d67c1d"
+            ]
+        ]
+    },
+    {
+        "id": "3fced38cac8e8595",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1120.0000457763672,
+        "y": 50.00000190734863,
+        "wires": []
+    },
+    {
+        "id": "60e81eed4fdac841",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "set state",
+        "func": "msg.user_data.state = '';\nmsg.user_data.flow = 'main';\nglobal.set(`${msg.chat_id}`, msg.user_data);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 714.4444561004639,
+        "y": 1076.6666469573975,
+        "wires": [
+            [
+                "07d4233179f2c1d8"
+            ]
+        ]
+    },
+    {
+        "id": "6886102e9dda7f40",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "user_data",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "2884eee5e7b9ae78",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "confirmation",
+        "func": "\n\nmsg.user_data.email = msg.text;\n\nmsg.payload.text = `Перевірте чи все записанов вірно:\nІмя: ${msg.user_data.first_name}\nПрізвище: ${msg.user_data.last_name}\nНомер телефону: ${msg.user_data.phone_number}\nEmail: ${msg.user_data.email}`;\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Виправити дані\",\n            \"callback_data\": 'data_confirmed'\n        },\n        {\n            \"text\": \"Все вірно\",\n            \"callback_data\": 'change_profile'\n        }]\n    ],\n    'resize_keyboard': true\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 724.4444561004639,
+        "y": 836.6666469573975,
+        "wires": [
+            [
+                "138e842bc262ba71"
+            ]
+        ]
+    },
+    {
+        "id": "138e842bc262ba71",
+        "type": "subflow:66e6af8356755793",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "x": 944.4444561004639,
+        "y": 836.6666469573975,
+        "wires": [
+            [
+                "49922eeafb59e948"
+            ],
+            [
+                "e34ed1c711f66388"
+            ]
+        ]
+    },
+    {
+        "id": "e34ed1c711f66388",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1104.4444561004639,
+        "y": 876.6666469573975,
+        "wires": []
+    },
+    {
+        "id": "49922eeafb59e948",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "webhooktg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1264.4444561004639,
+        "y": 807.6666469573975,
+        "wires": []
+    },
+    {
+        "id": "5e6cbf27d3a11ae3",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "set state",
+        "func": "global.set(\"state\", \"confirmation\");\nglobal.set(\"flow\", 'main');\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1114.4444561004639,
+        "y": 807.6666469573975,
+        "wires": [
+            [
+                "49922eeafb59e948"
+            ]
+        ]
+    },
+    {
+        "id": "d3175e46dbbd240a",
+        "type": "function",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "msg.text validation",
+        "func": "//email validation\nfunction validateEmail(email) {\n    var re = /\\S+@\\S+\\.\\S+/;\n    return re.test(email);\n}\n\nfunction validatePhone(phone) {\n  let re = /^380[0-9]{9}$/;\n  return re.test(phone);\n}\n\nif (msg.user_data.state == 'change_profile') { // for correction data at some state\n    msg.user_data.state = msg.text;\n    msg.text = '';\n}\n\nif (!msg.user_data || !msg.user_data.state || msg.user_data.state == 'registration') {\n    if (msg.text && msg.text != '' && msg.text == 'Зареєструватись') {\n        msg.user_data.state = 'get_first_name';//get_first_name\n    } else {\n        msg.user_data.state = 'registration';//welcome\n    }\n} else if (msg.user_data.state == 'get_first_name') {\n    if (msg.text && msg.text != '') {\n        msg.user_data.first_name = msg.text;\n        msg.user_data.state = 'get_last_name';//get last name\n    } else {\n        msg.user_data.state = 'get_first_name';//repeat get_first_name\n    }\n}  else if (msg.user_data.state == 'get_last_name') {\n    if (msg.text && msg.text != '') {\n        msg.user_data.last_name = msg.text;\n        msg.user_data.state = 'get_phone';//get phone\n    } else {\n        msg.user_data.state = 'get_last_name';//repeat get_last_name\n    }\n}  else if (msg.user_data.state == 'get_phone') {\n    if (msg.user_data.phone_number && (validatePhone(msg.user_data.phone_number) || msg.user_data.phone_number.length() == 12)) {\n        msg.user_data.state = 'get_email';\n    } else if ((!msg.user_data.phone_number || msg.user_data.phone_number == '') && msg.text && validatePhone(msg.text)) {\n        msg.user_data.phone_number = msg.text;\n        msg.user_data.state = 'get_email';\n    } else {\n        msg.user_data.state = 'get_phone';\n    }\n\n}  else if (msg.user_data.state == 'get_email') {\n    if (msg.text && msg.text != '' && validateEmail(msg.text)) {\n        msg.user_data.email = msg.text;\n        msg.user_data.state = 'confirmation';\n    } else {\n        msg.user_data.state = 'get_email';\n    }\n\n}  else if (msg.user_data.state == 'confirmation') {\n    if (msg.text && msg.text == 'Все вірно') {\n        msg.user_data.state = 'finish'; \n    } else if (msg.text && msg.text == 'Виправити дані') {\n        msg.user_data.state = 'change_profile'\n    } else {\n        msg.user_data.state = 'confirmation';//welcome\n    }\n}  \nglobal.set(`${msg.chat_id}`, msg.user_data)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 311.11112213134766,
+        "y": 546.6666679382324,
+        "wires": [
+            [
+                "e1fc50f72bad8b5b",
+                "6886102e9dda7f40"
+            ]
+        ]
+    },
+    {
+        "id": "4515f437b0ea9c3d",
+        "type": "debug",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "text",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "07d4233179f2c1d8",
+        "type": "link out",
+        "z": "a5dbc1a6f35dd83e",
+        "name": "",
+        "mode": "link",
+        "links": [
+            "55c2e9c77550f687",
+            "4c52d0e8ef6be12d",
+            "9e8f975502b2d175"
+        ],
+        "x": 835,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "cee9f2b82465bab9",
+        "type": "link in",
+        "z": "89be0f25632bd28a",
+        "name": "",
+        "links": [
+            "2edec0742b8c817a"
+        ],
+        "x": 105,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "73c42d2b6fb9a87e",
+        "type": "link in",
+        "z": "2ade4ea4102cc1ec",
+        "name": "",
+        "links": [
+            "a77622dddc02aab1"
+        ],
+        "x": 115,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "64bf90ee4120ccec",
+        "type": "link in",
+        "z": "9ba50324dd1e6e05",
+        "name": "",
+        "links": [
+            "d618acaca75b1ab4"
+        ],
+        "x": 145,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "96778e5e1f7f59c6",
+        "type": "link in",
+        "z": "0cc2b3c19faa03e9",
+        "name": "",
+        "links": [
+            "b4d1002d6b62f9fd"
+        ],
+        "x": 105,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fd7cdb605c4b9596",
+        "type": "link in",
+        "z": "8c2d6816e744f51d",
+        "name": "",
+        "links": [
+            "b2043f816e030982"
+        ],
+        "x": 175,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5907e6d7961294a4",
+        "type": "link in",
+        "z": "3949f14a014878ce",
+        "name": "",
+        "links": [
+            "266bb41d6f623afc"
+        ],
+        "x": 205,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "384e6fca60b9dc4f",
+        "type": "link in",
+        "z": "d869d79036fed8e9",
+        "name": "",
+        "links": [
+            "190f871a83df6eee"
+        ],
+        "x": 95,
+        "y": 100,
         "wires": [
             []
         ]

@@ -15,6 +15,7 @@ module.exports = {
         TOKEN: '5168155009:AAFVBTePW1q2HBzihyj2UXRCtrIQqeKyjkg',
         bot_version: '0.0.1',
         TELEGRAM_URL: 'https://api.telegram.org'
+        
       }
     },
   ],
