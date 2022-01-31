@@ -284,7 +284,7 @@
         "type": "function",
         "z": "0b520d44806a11f3",
         "name": "",
-        "func": "msg.payload.chat_id = msg.payload.message.chat.id;\nmsg.chat_id = msg.payload.message.chat.id;\nmsg.firstName = msg.payload.message.from.first_name;\nmsg.text = msg.payload.message.text;\n\n\n//check if exists user_data \nif (!global.get(`${msg.payload.message.chat.id}`)) {\n    msg.user_data = {};\n    msg.user_data.flow = 'onboarding';\n    msg.user_data.state = 'registration';    \n} else {\n    msg.user_data = global.get(`${msg.payload.message.chat.id}`);\n}\n\n\n//get data from contact if exists\nif (msg.message && msg.message.contact && msg.message.contact.phone_number) {\n    smq.user_data.phone_number = msg.message.contact.phone_number;\n}\n\nreturn msg;",
+        "func": "if (msg.payload.message) {\n    msg.payload.chat_id = msg.payload.message.chat.id;\n    msg.chat_id = msg.payload.message.chat.id;\n    msg.text = msg.payload.message.text;\n} else if (msg.payload.callback_query) {\n    msg.payload.chat_id = msg.payload.callback_query.message.chat.id;\n    msg.chat_id = msg.payload.callback_query.message.chat.id;\n    msg.text = msg.payload.callback_query.data;\n}\n\n//check if exists user_data \nif (!global.get(`${msg.chat_id}`)) {\n    msg.user_data = {};\n    msg.user_data.flow = 'onboarding';\n    msg.user_data.state = 'registration';    \n} else {\n    msg.user_data = global.get(`${msg.chat_id}`);\n}\n\n\n//get data from contact if exists\nif (msg.user_data.state == 'get_phone' && msg.payload.message \n        && msg.payload.message.contact && msg.payload.message.contact.phone_number\n        && msg.payload.message.contact.phone_number != '') {\n            \n    msg.user_data.phone_number = msg.payload.message.contact.phone_number;\n    msg.text = msg.payload.message.contact.phone_number;\n}\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -350,32 +350,32 @@
             },
             {
                 "t": "eq",
-                "v": "appartment_rent",
+                "v": "/appartment_rent",
                 "vt": "str"
             },
             {
                 "t": "eq",
-                "v": "other_rent",
+                "v": "/other_rent",
                 "vt": "str"
             },
             {
                 "t": "eq",
-                "v": "events",
+                "v": "/events",
                 "vt": "str"
             },
             {
                 "t": "eq",
-                "v": "government",
+                "v": "/government",
                 "vt": "str"
             },
             {
                 "t": "eq",
-                "v": "letters",
+                "v": "/letters",
                 "vt": "str"
             },
             {
                 "t": "eq",
-                "v": "other",
+                "v": "/other",
                 "vt": "str"
             },
             {
@@ -534,7 +534,7 @@
         "type": "function",
         "z": "b2d87526124908d3",
         "name": "parse message, update flow",
-        "func": "\nreturn msg;",
+        "func": "msg.commands = ['/appartment_rent', '/other_rent', '/events', '/government', '/letters', '/other']\n\nif (msg.commands.includes(msg.text)) {\n    msg.user_data.flow = msg.text;\n    global.set(`${msg.chat_id}`, msg.user_data)\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -582,7 +582,7 @@
         "type": "function",
         "z": "3d99c27f51c2d001",
         "name": "get_email",
-        "func": "\nmsg.payload.text = 'Тут буде головне меню';\n\nreturn msg;",
+        "func": "\nmsg.payload.text = `Вітаємо у головному меню. Оберіть пункт що вас цікавить`;\nmsg.payload.reply_markup = {\n    \"inline_keyboard\": [\n        [{\n            \"text\": \"Бронювання приміщень\",\n            \"callback_data\": '/appartment_rent'\n        },\n        {\n            \"text\": \"Оренда\",\n            \"callback_data\": '/other_rent'\n        }],\n        [{\n            \"text\": \"Заходи\",\n            \"callback_data\": '/events'\n        },\n        {\n            \"text\": \"Улад\",\n            \"callback_data\": '/government'\n        }],\n        [{\n            \"text\": \"Листи\",\n            \"callback_data\": '/letters'\n        },\n        {\n            \"text\": \"Інші питання\",\n            \"callback_data\": '/other'\n        }]\n    ],\n    'resize_keyboard': true,\n    'one_time_keyboard': true\n};\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -997,7 +997,7 @@
         "type": "function",
         "z": "a5dbc1a6f35dd83e",
         "name": "get_phone",
-        "func": "\nmsg.payload.text = 'Ваш номер телефону';\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Поділитись номером\",\n            \"request_contact\": true\n        }]\n    ],\n    'resize_keyboard': true\n};\n\nreturn msg;",
+        "func": "\nmsg.payload.text = 'Ваш номер телефону';\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Поділитись номером\",\n            \"request_contact\": true\n        }]\n    ],\n    'resize_keyboard': true,\n    'one_time_keyboard': true\n};\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1085,7 +1085,7 @@
         "type": "function",
         "z": "a5dbc1a6f35dd83e",
         "name": "get_email",
-        "func": "\nmsg.payload.text = 'Ваш email:';\nmsg.payload.entities = [{\n    \"type\": \"email\",\n    \"offset\": 2,\n    \"length\": 20\n}];\n\nreturn msg;",
+        "func": "\nmsg.payload.text = 'Ваш email:';\n\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1190,7 +1190,7 @@
         "type": "function",
         "z": "a5dbc1a6f35dd83e",
         "name": "registration",
-        "func": "\nmsg.payload.text = 'Щоб усі твої запити було простіше обробляти пропоную тобі зареєструватись';\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Зареєструватись\",\n            \"callback_data\": \"get_first_name\"\n        }]\n    ],\n    'resize_keyboard': true\n};\n\nreturn msg;",
+        "func": "\nmsg.payload.text = 'Щоб усі твої запити було простіше обробляти пропоную тобі зареєструватись';\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Зареєструватись\",\n            \"callback_data\": \"get_first_name\"\n        }]\n    ],\n    'resize_keyboard': true,\n    'one_time_keyboard': true\n};\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1242,7 +1242,7 @@
         "type": "function",
         "z": "a5dbc1a6f35dd83e",
         "name": "change_profile",
-        "func": "\n\n\nreturn msg;",
+        "func": "\nmsg.payload.text = `Оберіть пункт що потребує зміни`;\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Iм'я\"\n        },\n        {\n            \"text\": \"Прізвище\"\n        }],\n        [{\n            \"text\": \"Email\"\n        },\n        {\n            \"text\": \"Номер телефону\"\n        }]\n    ],\n    'resize_keyboard': true,\n    'one_time_keyboard': true\n};\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1408,7 +1408,7 @@
         "type": "function",
         "z": "a5dbc1a6f35dd83e",
         "name": "confirmation",
-        "func": "\n\nmsg.user_data.email = msg.text;\n\nmsg.payload.text = `Перевірте чи все записанов вірно:\nІмя: ${msg.user_data.first_name}\nПрізвище: ${msg.user_data.last_name}\nНомер телефону: ${msg.user_data.phone_number}\nEmail: ${msg.user_data.email}`;\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Виправити дані\",\n            \"callback_data\": 'data_confirmed'\n        },\n        {\n            \"text\": \"Все вірно\",\n            \"callback_data\": 'change_profile'\n        }]\n    ],\n    'resize_keyboard': true\n};\n\nreturn msg;\n",
+        "func": "\nmsg.payload.text = `Перевірте чи все записанов вірно:\nІмя: ${msg.user_data.first_name}\nПрізвище: ${msg.user_data.last_name}\nНомер телефону: ${msg.user_data.phone_number}\nEmail: ${msg.user_data.email}`;\nmsg.payload.reply_markup = {\n    \"keyboard\": [\n        [{\n            \"text\": \"Виправити дані\",\n            \"callback_data\": 'data_confirmed'\n        },\n        {\n            \"text\": \"Все вірно\",\n            \"callback_data\": 'change_profile'\n        }]\n    ],\n    'resize_keyboard': true,\n    'one_time_keyboard': true\n};\n\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1496,7 +1496,7 @@
         "type": "function",
         "z": "a5dbc1a6f35dd83e",
         "name": "msg.text validation",
-        "func": "//email validation\nfunction validateEmail(email) {\n    var re = /\\S+@\\S+\\.\\S+/;\n    return re.test(email);\n}\n\nfunction validatePhone(phone) {\n  let re = /^380[0-9]{9}$/;\n  return re.test(phone);\n}\n\nif (msg.user_data.state == 'change_profile') { // for correction data at some state\n    msg.user_data.state = msg.text;\n    msg.text = '';\n}\n\nif (!msg.user_data || !msg.user_data.state || msg.user_data.state == 'registration') {\n    if (msg.text && msg.text != '' && msg.text == 'Зареєструватись') {\n        msg.user_data.state = 'get_first_name';//get_first_name\n    } else {\n        msg.user_data.state = 'registration';//welcome\n    }\n} else if (msg.user_data.state == 'get_first_name') {\n    if (msg.text && msg.text != '') {\n        msg.user_data.first_name = msg.text;\n        msg.user_data.state = 'get_last_name';//get last name\n    } else {\n        msg.user_data.state = 'get_first_name';//repeat get_first_name\n    }\n}  else if (msg.user_data.state == 'get_last_name') {\n    if (msg.text && msg.text != '') {\n        msg.user_data.last_name = msg.text;\n        msg.user_data.state = 'get_phone';//get phone\n    } else {\n        msg.user_data.state = 'get_last_name';//repeat get_last_name\n    }\n}  else if (msg.user_data.state == 'get_phone') {\n    if (msg.user_data.phone_number && (validatePhone(msg.user_data.phone_number) || msg.user_data.phone_number.length() == 12)) {\n        msg.user_data.state = 'get_email';\n    } else if ((!msg.user_data.phone_number || msg.user_data.phone_number == '') && msg.text && validatePhone(msg.text)) {\n        msg.user_data.phone_number = msg.text;\n        msg.user_data.state = 'get_email';\n    } else {\n        msg.user_data.state = 'get_phone';\n    }\n\n}  else if (msg.user_data.state == 'get_email') {\n    if (msg.text && msg.text != '' && validateEmail(msg.text)) {\n        msg.user_data.email = msg.text;\n        msg.user_data.state = 'confirmation';\n    } else {\n        msg.user_data.state = 'get_email';\n    }\n\n}  else if (msg.user_data.state == 'confirmation') {\n    if (msg.text && msg.text == 'Все вірно') {\n        msg.user_data.state = 'finish'; \n    } else if (msg.text && msg.text == 'Виправити дані') {\n        msg.user_data.state = 'change_profile'\n    } else {\n        msg.user_data.state = 'confirmation';//welcome\n    }\n}  \nglobal.set(`${msg.chat_id}`, msg.user_data)\nreturn msg;",
+        "func": "//email validation\n\nfunction validateEmail(email) {\n    var re = /\\S+@\\S+\\.\\S+/;\n    return re.test(email);\n}\n\nfunction validatePhone(phone) {\n  let re = /^380[0-9]{9}$/;\n  return re.test(phone);\n}\n\n\nif (msg.user_data.state == 'change_profile') { // for correction data at some state\n    msg.user_data.state = msg.text;\n    switch (msg.text) {\n        case \"Iм'я\" :\n            msg.user_data.state = 'get_first_name';\n            break ;\n        case \"Прізвище\" :\n            msg.user_data.state = 'get_last_name';\n            break ;\n        case \"Номер телефону\" :\n            msg.user_data.state = 'get_phone';\n            break ;\n        case \"Email\" :\n            msg.user_data.state = 'get_email';\n            break ;\n        \n    }\n    msg.text = '';\n}\n\nif (!msg.user_data || !msg.user_data.state || msg.user_data.state == 'registration') {\n    if (msg.text && msg.text != '' && msg.text == 'Зареєструватись') {\n        msg.user_data.state = 'get_first_name';//get_first_name\n    } else {\n        msg.user_data.state = 'registration';//welcome\n    }\n} else if (msg.user_data.state == 'get_first_name') {\n    if (msg.text && msg.text != '') {\n        msg.user_data.first_name = msg.text;\n        msg.user_data.state = 'get_last_name';//get last name\n    } else {\n        msg.user_data.state = 'get_first_name';//repeat get_first_name\n    }\n}  else if (msg.user_data.state == 'get_last_name') {\n    if (msg.text && msg.text != '') {\n        msg.user_data.last_name = msg.text;\n        msg.user_data.state = 'get_phone';//get phone\n    } else {\n        msg.user_data.state = 'get_last_name';//repeat get_last_name\n    }\n}  else if (msg.user_data.state == 'get_phone') {\n    if (msg.user_data.phone_number && (validatePhone(msg.user_data.phone_number) || msg.user_data.phone_number.length() == 12)) {\n        msg.user_data.state = 'get_email';\n    } else if ((!msg.user_data.phone_number || msg.user_data.phone_number == '') && msg.text && validatePhone(msg.text)) {\n        msg.user_data.phone_number = msg.text;\n        msg.user_data.state = 'get_email';\n    } else {\n        msg.user_data.state = 'get_phone';\n    }\n\n}  else if (msg.user_data.state == 'get_email') {\n    if (msg.text && msg.text != '' && validateEmail(msg.text)) {\n        msg.user_data.email = msg.text;\n        msg.user_data.all_data_set = true;\n        msg.user_data.state = 'confirmation';\n    } else {\n        msg.user_data.state = 'get_email';\n    }\n\n}  else if (msg.user_data.state == 'confirmation') {\n    if (msg.text && msg.text == 'Все вірно') {\n        msg.user_data.state = 'finish'; \n    } else if (msg.text && msg.text == 'Виправити дані') {\n        msg.user_data.state = 'change_profile'\n    } else {\n        msg.user_data.state = 'confirmation';//welcome\n    }\n}  \n\nif (msg.user_data.all_data_set === true && msg.text != '' && \n    (msg.user_data.state == 'get_first_name' || msg.user_data.state == 'get_last_name'\n    || msg.user_data.state == 'get_phone' || msg.user_data.state == 'get_email')) {\n    msg.user_data.state = 'confirmation';\n}\n\nglobal.set(`${msg.chat_id}`, msg.user_data)\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1554,8 +1554,77 @@
         "x": 105,
         "y": 140,
         "wires": [
-            []
+            [
+                "8cd176dc15efb536"
+            ]
         ]
+    },
+    {
+        "id": "8cd176dc15efb536",
+        "type": "function",
+        "z": "89be0f25632bd28a",
+        "name": "appartment_rent parse",
+        "func": "\nmsg.payload.text = `Вітаємо у меню бронювання приміщень.`;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 140,
+        "wires": [
+            [
+                "2737fa2e13513acd"
+            ]
+        ]
+    },
+    {
+        "id": "2737fa2e13513acd",
+        "type": "subflow:66e6af8356755793",
+        "z": "89be0f25632bd28a",
+        "name": "",
+        "x": 470,
+        "y": 140,
+        "wires": [
+            [
+                "313892e777df69f4"
+            ],
+            [
+                "524f626227926931"
+            ]
+        ]
+    },
+    {
+        "id": "313892e777df69f4",
+        "type": "debug",
+        "z": "89be0f25632bd28a",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 647,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "524f626227926931",
+        "type": "debug",
+        "z": "89be0f25632bd28a",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 647,
+        "y": 180,
+        "wires": []
     },
     {
         "id": "73c42d2b6fb9a87e",
@@ -1568,8 +1637,77 @@
         "x": 115,
         "y": 160,
         "wires": [
-            []
+            [
+                "e595b9b68e7413d7"
+            ]
         ]
+    },
+    {
+        "id": "e595b9b68e7413d7",
+        "type": "function",
+        "z": "2ade4ea4102cc1ec",
+        "name": "other_rent parse",
+        "func": "\nmsg.payload.text = `Вітаємо у меню оренди.`;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 240,
+        "y": 160,
+        "wires": [
+            [
+                "6fa11d12fb2a4c55"
+            ]
+        ]
+    },
+    {
+        "id": "6fa11d12fb2a4c55",
+        "type": "subflow:66e6af8356755793",
+        "z": "2ade4ea4102cc1ec",
+        "name": "",
+        "x": 430,
+        "y": 160,
+        "wires": [
+            [
+                "d7a114fb0e383974"
+            ],
+            [
+                "634ee2fb1b876012"
+            ]
+        ]
+    },
+    {
+        "id": "d7a114fb0e383974",
+        "type": "debug",
+        "z": "2ade4ea4102cc1ec",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 642,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "634ee2fb1b876012",
+        "type": "debug",
+        "z": "2ade4ea4102cc1ec",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 642,
+        "y": 200,
+        "wires": []
     },
     {
         "id": "64bf90ee4120ccec",
@@ -1582,8 +1720,77 @@
         "x": 145,
         "y": 140,
         "wires": [
-            []
+            [
+                "2eb9068d6fffeaa7"
+            ]
         ]
+    },
+    {
+        "id": "2eb9068d6fffeaa7",
+        "type": "function",
+        "z": "9ba50324dd1e6e05",
+        "name": "events parse",
+        "func": "\nmsg.payload.text = `Вітаємо у меню заходів.`;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 272,
+        "y": 140,
+        "wires": [
+            [
+                "42935794f1f66def"
+            ]
+        ]
+    },
+    {
+        "id": "42935794f1f66def",
+        "type": "subflow:66e6af8356755793",
+        "z": "9ba50324dd1e6e05",
+        "name": "",
+        "x": 450,
+        "y": 140,
+        "wires": [
+            [
+                "156dc267386a2c55"
+            ],
+            [
+                "4505e0f1eb810955"
+            ]
+        ]
+    },
+    {
+        "id": "156dc267386a2c55",
+        "type": "debug",
+        "z": "9ba50324dd1e6e05",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "4505e0f1eb810955",
+        "type": "debug",
+        "z": "9ba50324dd1e6e05",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 180,
+        "wires": []
     },
     {
         "id": "96778e5e1f7f59c6",
@@ -1596,8 +1803,77 @@
         "x": 105,
         "y": 140,
         "wires": [
-            []
+            [
+                "651d71c66de10cf9"
+            ]
         ]
+    },
+    {
+        "id": "651d71c66de10cf9",
+        "type": "function",
+        "z": "0cc2b3c19faa03e9",
+        "name": "government parse",
+        "func": "\nmsg.payload.text = `Вітаємо у меню улади.`;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 250,
+        "y": 140,
+        "wires": [
+            [
+                "1b38c3b94d238784"
+            ]
+        ]
+    },
+    {
+        "id": "1b38c3b94d238784",
+        "type": "subflow:66e6af8356755793",
+        "z": "0cc2b3c19faa03e9",
+        "name": "",
+        "x": 450,
+        "y": 140,
+        "wires": [
+            [
+                "68dafd6e9e89e0d6"
+            ],
+            [
+                "10d8509260543953"
+            ]
+        ]
+    },
+    {
+        "id": "68dafd6e9e89e0d6",
+        "type": "debug",
+        "z": "0cc2b3c19faa03e9",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 648,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "10d8509260543953",
+        "type": "debug",
+        "z": "0cc2b3c19faa03e9",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 648,
+        "y": 180,
+        "wires": []
     },
     {
         "id": "fd7cdb605c4b9596",
@@ -1610,8 +1886,77 @@
         "x": 175,
         "y": 140,
         "wires": [
-            []
+            [
+                "ab82ba15776ff513"
+            ]
         ]
+    },
+    {
+        "id": "ab82ba15776ff513",
+        "type": "function",
+        "z": "8c2d6816e744f51d",
+        "name": "letters parse",
+        "func": "\nmsg.payload.text = `Вітаємо у меню листів.`;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 140,
+        "wires": [
+            [
+                "68dfb95e75c856d2"
+            ]
+        ]
+    },
+    {
+        "id": "68dfb95e75c856d2",
+        "type": "subflow:66e6af8356755793",
+        "z": "8c2d6816e744f51d",
+        "name": "",
+        "x": 530,
+        "y": 140,
+        "wires": [
+            [
+                "7c1389a6d3443bf0"
+            ],
+            [
+                "f0198431288f2d2d"
+            ]
+        ]
+    },
+    {
+        "id": "7c1389a6d3443bf0",
+        "type": "debug",
+        "z": "8c2d6816e744f51d",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 728,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "f0198431288f2d2d",
+        "type": "debug",
+        "z": "8c2d6816e744f51d",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 728,
+        "y": 180,
+        "wires": []
     },
     {
         "id": "5907e6d7961294a4",
@@ -1624,8 +1969,77 @@
         "x": 205,
         "y": 160,
         "wires": [
-            []
+            [
+                "0aa570b96059f837"
+            ]
         ]
+    },
+    {
+        "id": "0aa570b96059f837",
+        "type": "function",
+        "z": "3949f14a014878ce",
+        "name": "other questions parse",
+        "func": "\nmsg.payload.text = `Вітаємо у меню листів.`;\n\n\nmsg.payload.text = `Вітаємо у головному меню. Оберіть пункт що вас цікавить`;\nmsg.payload.reply_markup = {\n    \"inline_keyboard\": [\n        [{\n            \"text\": \"Поспілкуватись із адміністратором\",\n            \"callback_data\": 'admin_comunication_flow'\n        },\n        {\n            \"text\": \"Офіс пласт у Львові\",\n            \"callback_data\": 'relink'\n        }]\n    ],\n    'resize_keyboard': true,\n    'one_time_keyboard': true\n};\n\nreturn msg;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 160,
+        "wires": [
+            [
+                "8192c343dce2a980"
+            ]
+        ]
+    },
+    {
+        "id": "8192c343dce2a980",
+        "type": "subflow:66e6af8356755793",
+        "z": "3949f14a014878ce",
+        "name": "",
+        "x": 550,
+        "y": 160,
+        "wires": [
+            [
+                "7c1a01dc608e776e"
+            ],
+            [
+                "9a0469eb6832eeb4"
+            ]
+        ]
+    },
+    {
+        "id": "7c1a01dc608e776e",
+        "type": "debug",
+        "z": "3949f14a014878ce",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 748,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9a0469eb6832eeb4",
+        "type": "debug",
+        "z": "3949f14a014878ce",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 748,
+        "y": 200,
+        "wires": []
     },
     {
         "id": "384e6fca60b9dc4f",
@@ -1638,7 +2052,76 @@
         "x": 95,
         "y": 100,
         "wires": [
-            []
+            [
+                "0aa687bef851f14f"
+            ]
         ]
+    },
+    {
+        "id": "0aa687bef851f14f",
+        "type": "function",
+        "z": "d869d79036fed8e9",
+        "name": "other questions parse",
+        "func": "\nmsg.payload.text = `Дякуємо за твій запит. Лиши відгук про роботу з адміністрацією Пласту у Львові`;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 100,
+        "wires": [
+            [
+                "0b2731d6ab2a4456"
+            ]
+        ]
+    },
+    {
+        "id": "0b2731d6ab2a4456",
+        "type": "subflow:66e6af8356755793",
+        "z": "d869d79036fed8e9",
+        "name": "",
+        "x": 450,
+        "y": 100,
+        "wires": [
+            [
+                "c070f3f8db3ee6bd"
+            ],
+            [
+                "c3bdd7a9fbb2d6a3"
+            ]
+        ]
+    },
+    {
+        "id": "c070f3f8db3ee6bd",
+        "type": "debug",
+        "z": "d869d79036fed8e9",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 648,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "c3bdd7a9fbb2d6a3",
+        "type": "debug",
+        "z": "d869d79036fed8e9",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 648,
+        "y": 140,
+        "wires": []
     }
 ]
