@@ -64,6 +64,14 @@
         "env": []
     },
     {
+        "id": "444b9a813a6f78cb",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "8c2d6816e744f51d",
         "type": "tab",
         "label": "letters",
@@ -83,6 +91,14 @@
         "id": "d869d79036fed8e9",
         "type": "tab",
         "label": "finish",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "abc92949fb2b54c6",
+        "type": "tab",
+        "label": "/users",
         "disabled": false,
         "info": "",
         "env": []
@@ -129,6 +145,89 @@
         "env": [],
         "meta": {},
         "color": "#DDAA99"
+    },
+    {
+        "id": "9af4e4bf7b3e551a",
+        "type": "subflow",
+        "name": "db call",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 88,
+                "y": 120,
+                "wires": [
+                    {
+                        "id": "a1c6d85ec2d98b3c"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 548,
+                "y": 120,
+                "wires": [
+                    {
+                        "id": "a1c6d85ec2d98b3c",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "595be9b799477ac6",
+        "type": "subflow",
+        "name": "user manipulations",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 80,
+                "y": 160,
+                "wires": [
+                    {
+                        "id": "06ff41f015626a0a"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 520,
+                "y": 160,
+                "wires": [
+                    {
+                        "id": "8dbec074f71a4106",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "ebe07f9f108b51a0",
+        "type": "mongodb4-client",
+        "name": "",
+        "protocol": "mongodb+srv",
+        "hostname": "cluster0.qedus.mongodb.net",
+        "port": "",
+        "dbName": "plast_lviv_bot_db",
+        "authSource": "",
+        "authMechanism": "DEFAULT",
+        "tls": false,
+        "tlsCAFile": "",
+        "tlsInsecure": false,
+        "uri": "",
+        "advanced": "",
+        "uriTabActive": "tab-uri-simple"
     },
     {
         "id": "ca2575eceba4b387",
@@ -196,6 +295,55 @@
         "wires": [
             [],
             []
+        ]
+    },
+    {
+        "id": "a1c6d85ec2d98b3c",
+        "type": "mongodb4",
+        "z": "9af4e4bf7b3e551a",
+        "clientNode": "ebe07f9f108b51a0",
+        "collection": "msg.collection",
+        "operation": "msg.operation",
+        "output": "toArray",
+        "name": "get users",
+        "x": 288,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8dbec074f71a4106",
+        "type": "mongodb4",
+        "z": "595be9b799477ac6",
+        "clientNode": "ebe07f9f108b51a0",
+        "collection": "users",
+        "operation": "find",
+        "output": "toArray",
+        "name": "",
+        "x": 390,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "06ff41f015626a0a",
+        "type": "function",
+        "z": "595be9b799477ac6",
+        "name": "",
+        "func": "msg.chat_id = 735660453;\nmsg.collection = 'users';\nmsg.operation = 'find';\n// msg.payload = [];\nmsg.payload = [{'chat_id': msg.chat_id}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 160,
+        "wires": [
+            [
+                "8dbec074f71a4106"
+            ]
         ]
     },
     {
@@ -1979,7 +2127,7 @@
         "type": "function",
         "z": "3949f14a014878ce",
         "name": "other questions parse",
-        "func": "\nmsg.payload.text = `Вітаємо у меню листів.`;\n\n\nmsg.payload.text = `Вітаємо у головному меню. Оберіть пункт що вас цікавить`;\nmsg.payload.reply_markup = {\n    \"inline_keyboard\": [\n        [{\n            \"text\": \"Поспілкуватись із адміністратором\",\n            \"callback_data\": '/appartment_rent'\n        },\n        {\n            \"text\": \"Офіс пласт у Львові\",\n            \"callback_data\": '/other_rent'\n        }]\n    ],\n    'resize_keyboard': true,\n    'one_time_keyboard': true\n};\n\nreturn msg;\nreturn msg;",
+        "func": "\nmsg.payload.text = `Вітаємо у меню листів.`;\n\n\nmsg.payload.text = `Вітаємо у головному меню. Оберіть пункт що вас цікавить`;\nmsg.payload.reply_markup = {\n    \"inline_keyboard\": [\n        [{\n            \"text\": \"Поспілкуватись із адміністратором\",\n            \"callback_data\": 'admin_comunication_flow'\n        },\n        {\n            \"text\": \"Офіс пласт у Львові\",\n            \"callback_data\": 'relink'\n        }]\n    ],\n    'resize_keyboard': true,\n    'one_time_keyboard': true\n};\n\nreturn msg;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -2122,6 +2270,452 @@
         "statusType": "auto",
         "x": 648,
         "y": 140,
+        "wires": []
+    },
+    {
+        "id": "a653e9bbb5fdf748",
+        "type": "http in",
+        "z": "abc92949fb2b54c6",
+        "name": "GET users",
+        "url": "/users",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 140,
+        "wires": [
+            [
+                "45d0999ee82f6030",
+                "d169659ec804573c"
+            ]
+        ]
+    },
+    {
+        "id": "374978e0751771dc",
+        "type": "http in",
+        "z": "abc92949fb2b54c6",
+        "name": "GET user by chat_id",
+        "url": "/user/:chat_id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 283,
+        "wires": [
+            [
+                "333d14f04f421da9",
+                "981834fe34f9b66f"
+            ]
+        ]
+    },
+    {
+        "id": "45d0999ee82f6030",
+        "type": "function",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "func": "msg.chat_id = 735660453;\nmsg.collection = 'users';\nmsg.operation = 'find';\nmsg.payload = [];\n// msg.payload = [{'chat_id': msg.chat_id}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 140,
+        "wires": [
+            [
+                "8b778f0d0ad4e4cd"
+            ]
+        ]
+    },
+    {
+        "id": "333d14f04f421da9",
+        "type": "function",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "func": "if (msg.req.url) {\n    msg.chat_id = msg.req.url.substring(6);\n    msg.chat_id = 735660453;\n} else {\n    msg.statusCode = 400;\n}\nmsg.collection = 'users';\nmsg.operation = 'find';\nmsg.payload = [{'chat_id': `${msg.chat_id}`}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 283,
+        "wires": [
+            [
+                "10d3428f70723e70"
+            ]
+        ]
+    },
+    {
+        "id": "8b778f0d0ad4e4cd",
+        "type": "mongodb4",
+        "z": "abc92949fb2b54c6",
+        "clientNode": "ebe07f9f108b51a0",
+        "collection": "msg.collection",
+        "operation": "msg.operation",
+        "output": "toArray",
+        "name": "db call",
+        "x": 470,
+        "y": 140,
+        "wires": [
+            [
+                "fae7798ede1a6f7a"
+            ]
+        ]
+    },
+    {
+        "id": "d169659ec804573c",
+        "type": "debug",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "req",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "fae7798ede1a6f7a",
+        "type": "function",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "func": "msg.statusCode = 200;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 607,
+        "y": 143,
+        "wires": [
+            [
+                "59558954aabd5a91"
+            ]
+        ]
+    },
+    {
+        "id": "59558954aabd5a91",
+        "type": "http response",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 757,
+        "y": 143,
+        "wires": []
+    },
+    {
+        "id": "8a75f7422993a023",
+        "type": "mongodb4",
+        "z": "abc92949fb2b54c6",
+        "clientNode": "ebe07f9f108b51a0",
+        "collection": "msg.collection",
+        "operation": "msg.operation",
+        "output": "toArray",
+        "name": "db call",
+        "x": 630,
+        "y": 303,
+        "wires": [
+            [
+                "3f07ba14b41656f4"
+            ]
+        ]
+    },
+    {
+        "id": "3f07ba14b41656f4",
+        "type": "function",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "func": "msg.statusCode = 200;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 303,
+        "wires": [
+            [
+                "7b8aa983e52114bc"
+            ]
+        ]
+    },
+    {
+        "id": "7b8aa983e52114bc",
+        "type": "http response",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 930,
+        "y": 303,
+        "wires": []
+    },
+    {
+        "id": "3f2f434b72630c02",
+        "type": "http in",
+        "z": "abc92949fb2b54c6",
+        "name": "POST create user",
+        "url": "/users/",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 460,
+        "wires": [
+            [
+                "e06247f7000bdaaf",
+                "4a101a81708ef9af"
+            ]
+        ]
+    },
+    {
+        "id": "e06247f7000bdaaf",
+        "type": "function",
+        "z": "abc92949fb2b54c6",
+        "name": "does not ready",
+        "func": "\n// Need to bee done\n// msg.chat_id = 735660453;\n// msg.collection = 'users';\n// msg.operation = 'find';\n// // msg.payload = [];\n// msg.payload = [{'chat_id': msg.chat_id}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 460,
+        "wires": [
+            [
+                "85570dcd2c7bdc06"
+            ]
+        ]
+    },
+    {
+        "id": "85570dcd2c7bdc06",
+        "type": "mongodb4",
+        "z": "abc92949fb2b54c6",
+        "clientNode": "ebe07f9f108b51a0",
+        "collection": "msg.collection",
+        "operation": "msg.operation",
+        "output": "toArray",
+        "name": "db call",
+        "x": 530,
+        "y": 460,
+        "wires": [
+            [
+                "d0c142d1c010af6e"
+            ]
+        ]
+    },
+    {
+        "id": "d0c142d1c010af6e",
+        "type": "function",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "func": "msg.statusCode = 200;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 460,
+        "wires": [
+            [
+                "6be5afd004af06a4"
+            ]
+        ]
+    },
+    {
+        "id": "6be5afd004af06a4",
+        "type": "http response",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 830,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "b729f7d91078bde4",
+        "type": "http in",
+        "z": "abc92949fb2b54c6",
+        "name": "PUT update user by chat_id",
+        "url": "/users/:chat_id",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 220,
+        "y": 620,
+        "wires": [
+            [
+                "87578ef46ad91040",
+                "df761f101ef2a705"
+            ]
+        ]
+    },
+    {
+        "id": "87578ef46ad91040",
+        "type": "function",
+        "z": "abc92949fb2b54c6",
+        "name": "does not ready",
+        "func": "msg.chat_id = 735660453;\nmsg.collection = 'users';\nmsg.operation = 'find';\n// msg.payload = [];\nmsg.payload = [{'chat_id': msg.chat_id}];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 620,
+        "wires": [
+            [
+                "0ff4a4803a9e4253"
+            ]
+        ]
+    },
+    {
+        "id": "0ff4a4803a9e4253",
+        "type": "mongodb4",
+        "z": "abc92949fb2b54c6",
+        "clientNode": "ebe07f9f108b51a0",
+        "collection": "msg.collection",
+        "operation": "msg.operation",
+        "output": "toArray",
+        "name": "db call",
+        "x": 630,
+        "y": 620,
+        "wires": [
+            [
+                "7aebe89a6e9243b6"
+            ]
+        ]
+    },
+    {
+        "id": "7aebe89a6e9243b6",
+        "type": "function",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "func": "msg.statusCode = 200;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 620,
+        "wires": [
+            [
+                "75938429b8d21beb"
+            ]
+        ]
+    },
+    {
+        "id": "75938429b8d21beb",
+        "type": "http response",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 930,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "10d3428f70723e70",
+        "type": "switch",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "400",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 510,
+        "y": 283,
+        "wires": [
+            [
+                "276640ec2f37b980"
+            ],
+            [
+                "8a75f7422993a023"
+            ]
+        ]
+    },
+    {
+        "id": "276640ec2f37b980",
+        "type": "http response",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 630,
+        "y": 243,
+        "wires": []
+    },
+    {
+        "id": "981834fe34f9b66f",
+        "type": "debug",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "req",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "df761f101ef2a705",
+        "type": "debug",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "req",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "4a101a81708ef9af",
+        "type": "debug",
+        "z": "abc92949fb2b54c6",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "req",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 400,
         "wires": []
     }
 ]

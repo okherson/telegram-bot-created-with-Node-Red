@@ -12,7 +12,7 @@ module.exports = {
       env: {
         NODE_ENV: "local",
         PORT: 1880,
-        TOKEN: '5168155009:AAFVBTePW1q2HBzihyj2UXRCtrIQqeKyjkg',
+        TOKEN: '',
         bot_version: '0.0.1',
         TELEGRAM_URL: 'https://api.telegram.org'
         
