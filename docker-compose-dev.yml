@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+  company-nodered-messanger:
+    image: 'localhost:5000/company-nodered-messanger:latest'
+    restart: unless-stopped
+    networks:
+      - ChatbotNetwork
+    environment:
+      - CUSTOMER_API_URL=
+      - CUSTOMER_API_KEY=
+      - MESSAGES_API_URL=
+      - MESSAGES_API_KEY=
+      - IMAGES_API_URL=
+      - IMAGES_API_KEY=
+      - NLP_CC_API_WRAPPER_URL=
+      - NLP_CC_API_WRAPPER_KEY=
+      - API_WRAPPER_URL=
+      - API_WRAPPER_KEY=
+      - WEBVIEW_URL=
+      - NODE_ENV=development
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.microservices=company"
+        - "traefik.http.routers.company-nodered-messanger.entrypoints=http-internal"
+        - "traefik.http.services.company-nodered-messanger.loadbalancer.server.port=1880"
+        - "traefik.http.routers.company-nodered-messanger.service=company-nodered-messanger"
+        - "traefik.http.routers.company-nodered-messanger.rule=PathPrefix(`/company-nodered-messanger`)"
+        - "traefik.http.middlewares.company-nodered-messanger-stripprefix.stripprefix.prefixes=/company-nodered-messanger"
+        - "traefik.http.middlewares.company-nodered-messanger-stripprefix.stripprefix.forceSlash=false"
+        - "traefik.http.routers.company-nodered-messanger.middlewares=company-nodered-messanger-stripprefix"
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.microservices == company
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 500M
+        reservations:
+          cpus: '0.1'
+          memory: 350M
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: eu-central-1
+        awslogs-group: company-nodered-messanger
+        awslogs-create-group: 'true'
+        tag: '{{.Name}}_{{ with split .ImageName ":" }}{{index . 1}}{{end}}_{{.ID}}'
+
+networks:
+  ChatbotNetwork:
+    external: true

@@ -1,0 +1,42 @@
+version: 0.2
+env:
+  variables:
+    PROJECT: "company-nodered-messanger"
+    STAGE: "dev"
+    STACK: "Stack"
+phases:
+  install:
+    commands:
+      - echo 'install'
+      - VERSION=$(bash scripts/versioning_aws)
+      - echo ${DOCKERHUB_PASSWORD} | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
+      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 006900613479.dkr.ecr.eu-central-1.amazonaws.com
+  build:
+    commands:
+      #insert here your build commands
+      - echo 'build'
+      - docker build --build-arg GITHUB_TOKEN=${GITHUB_TOKEN} -t ${PROJECT}:latest .
+      - docker tag ${PROJECT}:latest 006900613479.dkr.ecr.eu-central-1.amazonaws.com/${PROJECT}:latest
+      - docker tag ${PROJECT}:latest 006900613479.dkr.ecr.eu-central-1.amazonaws.com/${PROJECT}:${VERSION}
+      - docker push --all-tags 006900613479.dkr.ecr.eu-central-1.amazonaws.com/${PROJECT}
+  post_build:
+    commands:
+      - mkdir image
+      - ProjectFolder="${PROJECT}${Branch}"
+      - SERVICE="${STACK}_${PROJECT}"
+      - sed -i "s/{{FOLDER}}/${ProjectFolder}/g" ./appspec.yml
+      - sed -i "s/{{FOLDER}}/${ProjectFolder}/g" ./scripts/start_server
+      - sed -i "s/{{FOLDER}}/${ProjectFolder}/g" ./scripts/stop_server
+      - sed -i "s/{{APPLICATION}}/${PROJECT}/g" ./scripts/stop_server
+      - sed -i "s/{{APPLICATION}}/${PROJECT}/g" ./scripts/start_server
+      - sed -i "s/{{VERSION}}/${VERSION}/g" ./scripts/start_server
+      - sed -i "s/{{SERVICE}}/${SERVICE}/g" ./scripts/start_server
+      - cp appspec.yml image/
+      - cp -r scripts image/
+      - ls image
+      - echo 'done'
+artifacts:
+  type: zip
+  files:
+    - "**/*"
+  base-directory: image

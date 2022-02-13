@@ -1,0 +1,19 @@
+#!/bin/bash
+version="$(jq .version package.json)"
+version="$(sed -e 's/^"//' -e 's/"$//' <<< "$version")"
+previous_version=$(aws ecr describe-images --repository-name $PROJECT --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --region eu-central-1)
+previous_version="$(sed -e 's/^"//' -e 's/"$//' <<< "$previous_version")"
+if [ "$previous_version" = "latest" ]; then
+    previous_version=$(aws ecr describe-images --repository-name $PROJECT --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[1]' --region eu-central-1)
+    previous_version="$(sed -e 's/^"//' -e 's/"$//' <<< "$previous_version")"
+fi
+if [ -z "$previous_version" ]; then
+    build_number=1
+elif [[ "$previous_version" =~ .*"$version".* ]]; then
+    previous_build=$(egrep --color=never -o "[0-9]+$" <<< $previous_version) 
+    build_number=$((previous_build+1))
+else
+    build_number=1
+fi
+build="$version"."$STAGE"."$build_number"
+echo $build

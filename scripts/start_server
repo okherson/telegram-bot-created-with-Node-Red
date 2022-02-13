@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /home/ubuntu/{{FOLDER}}
+docker service update --image localhost:5000/{{APPLICATION}}:{{VERSION}} {{SERVICE}}
+docker rmi $(docker images -aq) || true

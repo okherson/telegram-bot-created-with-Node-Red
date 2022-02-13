@@ -64,14 +64,6 @@
         "env": []
     },
     {
-        "id": "444b9a813a6f78cb",
-        "type": "tab",
-        "label": "Flow 1",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
         "id": "8c2d6816e744f51d",
         "type": "tab",
         "label": "letters",
@@ -2332,7 +2324,7 @@
         "type": "function",
         "z": "abc92949fb2b54c6",
         "name": "",
-        "func": "if (msg.req.url) {\n    msg.chat_id = msg.req.url.substring(6);\n    msg.chat_id = 735660453;\n} else {\n    msg.statusCode = 400;\n}\nmsg.collection = 'users';\nmsg.operation = 'find';\nmsg.payload = [{'chat_id': `${msg.chat_id}`}];\nreturn msg;",
+        "func": "if (msg.req.url) {\n    msg.chat_id = msg.req.url.substring(6);\n\n} else {\n    msg.statusCode = 400;\n}\nmsg.collection = 'users';\nmsg.operation = 'find';\nmsg.payload = [{'chat_id': `${msg.chat_id}`}];\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
