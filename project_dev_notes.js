@@ -13,7 +13,7 @@ var posible_rent_addresses = ['Шептицьких, 16', "Вишкільний 
 const government_states_arr = ['flow_start', 'government_category_selection', 'government_ups', 'government_upu', 'government_upn', 'government_upp', 'government_reporting', 'government_actual_link', 'government_pay_tab', 'government_debts_info'];
 const letters_states = ['school_exemption', 'event_order', 'letter_for_appartment', 'camp_order', 'letters_category_selection'];
 const other_rent_states = ['flow_start', 'rent_registration_relink', 'type_of_goods', 'feed_back'];
-
+const feedback_states = ['feedback_start', 'feedback_message', 'feedback_thanks'];
 const school_exemption = [
   'school_exemption_school_name',
   'school_exemption_school_director',
@@ -28,7 +28,9 @@ const school_exemption = [
 // 2) vty. type of goods
 // 3) wayting for call back -> feedback
 
-
+other_questions_category_selection
+text_admin
+2f74fe2d13b04877
 
 
 msg.apartment_db_time_slots[i][n].slot_status = 'booked'|'';
